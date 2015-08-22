@@ -28,4 +28,27 @@ def greet(name='Stranger'):
 def server_static(filepath):
 	return static_file(filepath, root='./static')
 
+# Should we use the route as a list of queries?
+# e.g., /1/3/4 represents the cost, time, and priority values?
+# Python could parse those values and use them to query the csv data
+
+@route('/<filepath:path>')
+def query_data(filepath):
+	# assuming the query_string is defined as:
+	# /cost/time/priority
+	cost = filepath.split('/')[0]
+	time = filepath.split('/')[1]
+	priority = filepath.split('/')[2]
+
+	return filter_data(cost, time, priority)
+
+	## return 'hey guys' + cost + time + priority
+
+def filter_data(cost, time, priority):
+	data_loc = 'task_data.csv'
+	df = pd.read_csv(data_loc)
+
+	a = df.query('Cost == ' + str(cost) + ' & ' + 'Priority == ' + str(priority))
+	return str(a)
+
 run(host='localhost', port=8080, debug=True)
