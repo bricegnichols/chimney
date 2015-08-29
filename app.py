@@ -36,8 +36,8 @@ def server_static(filepath):
 def query_data(filepath):
 	# assuming the query_string is defined as:
 	# /cost/time/priority
-	cost = filepath.split('/')[0]
-	time = filepath.split('/')[1]
+	time = filepath.split('/')[0]
+	cost = filepath.split('/')[1]
 	priority = filepath.split('/')[2]
 
 	return filter_data(cost, time, priority)
@@ -47,8 +47,10 @@ def query_data(filepath):
 def filter_data(cost, time, priority):
 	data_loc = 'task_data.csv'
 	df = pd.read_csv(data_loc)
-
-	a = df.query('Cost == ' + str(cost) + ' & ' + 'Priority == ' + str(priority))
-	return str(a)
+	print cost
+	a = df.query('Cost <= ' + str(cost) + ' & ' + 'Time <= ' + str(time) + ' & ' + 'Priority <= ' + str(priority))
+	#return str(a)
+	#return "Cost: " + cost + "," + "priority: " + priority
+	return a.to_html(classes='my_class')
 
 run(host='localhost', port=8080, debug=True)
