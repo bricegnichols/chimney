@@ -35,10 +35,11 @@ def server_static(filepath):
 @route('/<filepath:path>')
 def query_data(filepath):
 	# assuming the query_string is defined as:
-	# /cost/time/priority
-	time = filepath.split('/')[0]
-	cost = filepath.split('/')[1]
-	priority = filepath.split('/')[2]
+	# /cost/priority/time
+	cost = filepath.split('/')[0]
+	priority = filepath.split('/')[1]
+	time = filepath.split('/')[2]
+	
 
 	return filter_data(cost, time, priority)
 
