@@ -38,45 +38,20 @@ def greet(name='Stranger'):
 def server_static(filepath):
 	return static_file(filepath, root='./static')
 
-# Should we use the route as a list of queries?
-# e.g., /1/3/4 represents the cost, time, and priority values?
-# Python could parse those values and use them to query the csv data
-
-@route('/<filepath:path>')
-def query_data(filepath):
-	# assuming the query_string is defined as:
-	# /cost/priority/time
-	cost = filepath.split('/')[0]
-	priority = filepath.split('/')[1]
-	time = filepath.split('/')[2]
-	
-
-	return filter_data(cost, time, priority)
-
-	## return 'hey guys' + cost + time + priority
-
 # Show all the results in the database
-@route('/chimney')
-def show_chimney():
+@route('/<usrtime:int>/<usrcost:int>/<usrpriority:int>', method='GET')
+def show_chimney(usrtime, usrcost, usrpriority):
 	db = sqlite3.connect('tasks.db')
 	c = db.cursor()
-	c.execute("SELECT * FROM t WHERE Time < 8")
+	# c.execute("SELECT * FROM t WHERE (Time < ?)", (usrtime))
+	c.execute("SELECT * FROM t WHERE Time <= ? AND Cost <= ? AND Priority <= ?", (usrtime, usrcost, usrpriority,))
 	data = c.fetchall()
 	c.close()
 	output = template('bring_to_picnic', rows=data)
 	return output
 
-def filter_data(cost, time, priority):
-	data_loc = 'task_data.csv'
-	df = pd.read_csv(data_loc)
-	print cost
-	a = df.query('Cost <= ' + str(cost) + ' & ' + 'Time <= ' + str(time) + ' & ' + 'Priority <= ' + str(priority))
-	#return str(a)
-	#return "Cost: " + cost + "," + "priority: " + priority
-	return a.to_html(classes='my_class')
-
 if __name__ == "__main__": 
 	app = bottle.Bottle()
 	plugin = bottle.ext.sqlite.Plugin(dbfile='tasks.db')
 	app.install(plugin)
-	run(host='localhost', port=8080, debug=True)
+	run(host='localhost', port=8081, debug=True)
