@@ -1,6 +1,16 @@
 from bottle import route, run, template, static_file
 import pandas as pd
 import os
+import csv, sqlite3
+import bottle.ext.sqlite
+
+
+@route('/show/:item')
+def show(item, db):
+	row = db.execute('SELECT * from items where name=?', item).fetchone()
+	if row:
+		return template('showitem', page=row)
+	return HTTPSError(404, 'Page not found')
 
 @route('/hello')
 def hello():
@@ -45,6 +55,17 @@ def query_data(filepath):
 
 	## return 'hey guys' + cost + time + priority
 
+# Show all the results in the database
+@route('/chimney')
+def show_chimney():
+	db = sqlite3.connect('tasks.db')
+	c = db.cursor()
+	c.execute("SELECT * FROM t WHERE Time < 8")
+	data = c.fetchall()
+	c.close()
+	output = template('bring_to_picnic', rows=data)
+	return output
+
 def filter_data(cost, time, priority):
 	data_loc = 'task_data.csv'
 	df = pd.read_csv(data_loc)
@@ -54,4 +75,8 @@ def filter_data(cost, time, priority):
 	#return "Cost: " + cost + "," + "priority: " + priority
 	return a.to_html(classes='my_class')
 
-run(host='localhost', port=8080, debug=True)
+if __name__ == "__main__": 
+	app = bottle.Bottle()
+	plugin = bottle.ext.sqlite.Plugin(dbfile='tasks.db')
+	app.install(plugin)
+	run(host='localhost', port=8080, debug=True)
