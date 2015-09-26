@@ -1,4 +1,4 @@
-from bottle import route, run, template, static_file
+from bottle import route, run, template, static_file, request
 import pandas as pd
 import os
 import csv, sqlite3
@@ -43,12 +43,63 @@ def server_static(filepath):
 def show_chimney(usrtime, usrcost, usrpriority):
 	db = sqlite3.connect('tasks.db')
 	c = db.cursor()
-	# c.execute("SELECT * FROM t WHERE (Time < ?)", (usrtime))
 	c.execute("SELECT * FROM t WHERE Time <= ? AND Cost <= ? AND Priority <= ?", (usrtime, usrcost, usrpriority,))
 	data = c.fetchall()
 	c.close()
 	output = template('bring_to_picnic', rows=data)
 	return output
+
+
+# Add a new tasks
+@route('/new', method='GET')
+def new_item():
+
+	if request.GET.get('save', '').strip():
+		newTask = request.GET.get('Task', '').strip()
+		newTime = request.GET.get('Time', '').strip()
+		newCost = request.GET.get('Cost', '').strip()
+		newPriority = request.GET.get('Priority', '').strip()
+		newStatus = request.GET.get('Status', '').strip()
+		conn = sqlite3.connect('tasks.db')
+		c = conn.cursor()
+
+		c.execute('INSERT INTO t (Task, Time, Cost, Priority, Status) VALUES (?,?,?,?,?)', (newTask,int(newTime),int(newCost),int(newPriority), newStatus))
+		new_id = c.lastrowid
+
+		conn.commit()
+		c.close()
+
+		return '<p>The new task was inserted; the ID is %s</p>' % new_id
+	else:
+		return template('new_task.tpl')
+
+# Edit an existing task
+@route('/edit/<no:int>', method='GET')
+def edit_item(no):
+
+	if request.GET.get('save', '').strip():
+		task = request.GET.get('Task', '').strip()
+		time = request.GET.get('Time', '').strip()
+		cost = request.GET.get('Cost', '').strip()
+		priority = request.GET.get('Priority', '').strip()
+		status = request.GET.get('Status', '').strip()
+		conn = sqlite3.connect('tasks.db')
+		c = conn.cursor()
+		# c.execute('UPDATE t SET Task = ? WHERE rowid LIKE ?', (task,no))
+		c.execute('UPDATE t SET Task=?, Time=?, Cost=?, Priority=?, Status=? WHERE rowid LIKE ?', 
+			(task, int(time), int(cost), int(priority), status, no))
+		conn.commit()
+
+		return '<p>The item number %s was successfully updated</p>' % no
+	else:
+		conn = sqlite3.connect('tasks.db')
+		c = conn.cursor()
+		c.execute('SELECT Task FROM t WHERE rowid LIKE ?', (str(no),))
+		cur_data = c.fetchone()
+
+		return template('edit_task', old=cur_data, no=no)
+
+# Remove a task
 
 if __name__ == "__main__": 
 	app = bottle.Bottle()
