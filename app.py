@@ -106,6 +106,3 @@ if __name__ == "__main__":
 	app.install(plugin)
 	run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=False)
 	#run(host='0.0.0.0', port=8080, debug=False)
-=======
-	#run(host='0.0.0.0', port=8080, debug=False)
->>>>>>> 911933edbe6b424315394abb049c537a52674cd8
