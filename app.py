@@ -1,5 +1,4 @@
 from bottle import route, run, template, static_file, request
-import pandas as pd
 import os
 import csv, sqlite3
 import bottle.ext.sqlite
