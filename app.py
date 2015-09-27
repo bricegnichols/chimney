@@ -104,4 +104,4 @@ if __name__ == "__main__":
 	app = bottle.Bottle()
 	plugin = bottle.ext.sqlite.Plugin(dbfile='tasks.db')
 	app.install(plugin)
-	run(host='localhost', port=8081, debug=True)
+	run(host='0.0.0.0', port=80, debug=False)
