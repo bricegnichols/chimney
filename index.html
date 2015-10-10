@@ -11,55 +11,136 @@
 
 <body>
 <h1>task delivery:</h1>
-<div id='cost' class='selectors'>Max Cost
-<select name='cost'>
-  <option value="50"><$50</option>
-  <option value="200">$200</option>
-  <option value="500">$500</option>
-  <option value="1000">$1,000</option>
-  <option value="9999999">No Max</option>
-</select>
-</div>
-<div id='time' class='selectors'>Max Time
-<select name='time'>
-  <option value="4">4 hours</option>
-  <option value="8">8 hours</option>
-  <option value="12">12 hours</option>
-  <option value="24">24 hours</option>
-  <option value="10000">No Max</option>
-</select>	
-</div>
-<div id='priority' class='selectors'>Priority
-<select name='priority'>
-  <option value="1">Highest</option>
-  <option value="2">High</option>
-  <option value="3">Medium</option>
-  <option value="4">Low</option>
-  <option value="5">Lowest</option>
-  <option value="6">Doesn't Matter</option>
-</select>
-</div>
-<div>
+
+<!-- Cost slider -->
+<p>
+  <label for="costAmount">Cost:</label>
+  <input type="text" id="costAmount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+  <input type="checkbox" name='costCheck'> Any Cost
+</p>
+ 
+
+<!-- Time Slider -->
+
+<div id="slider-range-cost"></div>
+<br>
+<p>
+  <label for="timeAmount">Time:</label>
+  <input type="text" id="timeAmount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+  <input type="checkbox" name='timeCheck'> Any Time
+</p>
+ 
+<div id="slider-range-time"></div>
+
+<!-- Priority Slider -->
+
+<br>
+<p>
+  <label for="priorityAmount">Priority:</label>
+  <input type="text" id="priorityAmount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+  <input type="checkbox" name='priorityCheck'> No Priority
+</p>
+ 
+<div id="slider-range-priority"></div>
+<br>
+<div id='runqueryButton'>
   <br>
-<button name='runquery' type="button" class='button'>Gimme Projects!
+<button name='runquery' type="button" class='submitButton'>Gimme Projects!
 	</button>
 </div>
 </br>
+
+<div id='newTaskButton'>
+<br>
+<button name='newTask' type='button' class='taskButton'>Add a New Task
+</button>
+</div>
+
 <script type="text/javascript">
     document.write("\<script src='//ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js' type='text/javascript'>\<\/script>");
 </script>
+
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<script>
+$(function() {
+    $( "#slider-range-cost" ).slider({
+      range: true,
+      min: 0,
+      max: 5000,
+      values: [ 0, 300 ],
+      slide: function( event, ui ) {
+        $( "#costAmount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+      }
+    });
+    $( "#costAmount" ).val( "$" + $( "#slider-range-cost" ).slider( "values", 0 ) +
+      " - $" + $( "#slider-range-cost" ).slider( "values", 1 ) );
+  });
+</script>
+
+<script>
+$(function() {
+    $( "#slider-range-time" ).slider({
+      range: true,
+      min: 0,
+      max: 72,
+      values: [ 0, 72 ],
+      slide: function( event, ui ) {
+        $( "#timeAmount" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+      }
+    });
+    $( "#timeAmount" ).val($( "#slider-range-time" ).slider( "values", 0 ) +
+      " - " + $( "#slider-range-time" ).slider( "values", 1 ) + ' hours');
+  });
+</script>
+
+<script>
+$(function() {
+    $( "#slider-range-priority" ).slider({
+      range: true,
+      min: 1,
+      max: 5,
+      values: [ 1, 5 ],
+      slide: function( event, ui ) {
+        $( "#priorityAmount" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+      }
+    });
+    $( "#priorityAmount" ).val($( "#slider-range-priority" ).slider( "values", 0 ) +
+      " - " + $( "#slider-range-priority" ).slider( "values", 1 ) + ' ');
+  });
+</script>
+
+
 <script>
     $(document).ready(function() {
-        $('button').click(function() {
-        	cost = $('#cost option:selected').val();
-        	priority = $('#priority option:selected').val();
-        	time = $('#time option:selected').val();
-        	window.location.href =  time + '/' + cost + '/' + priority;
+        $('#runqueryButton').click(function() {
+          // Cost
+          if ($('[name=costCheck]').is(':checked') == true) {
+            var cost = "999999999"
+          } else {
+            var cost = $('#slider-range-cost').slider('option').values[1]
+          }
+          
+          // Priority
+        	if ($('[name=priorityCheck]').is(':checked') == true) {
+            var priority = "6"
+          } else {
+            var priority = $('#slider-range-priority').slider('option').values[1]
+          }
 
-            // window.location.href = 'static/timallen.png';
+          // Time
+          if ($('[name=timeCheck]').is(':checked') == true) {
+            var time = "999999999"
+          } else {
+            var time = $('#slider-range-time').slider('option').values[1]
+          }
+
+        	window.location.href =  time + '/' + cost + '/' + priority;
         });
-        $('select').on('change', function() {
-			console.log(this.value);
+        $('#newTaskButton').click(function() {
+			     window.location.href = '/new'
 
 		});
     });
