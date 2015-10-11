@@ -120,7 +120,8 @@ $(function() {
           if ($('[name=costCheck]').is(':checked') == true) {
             var cost = "999999999"
           } else {
-            var cost = $('#slider-range-cost').slider('option').values[1]
+            var mincost = $('#slider-range-cost').slider('option').values[0]
+            var maxcost = $('#slider-range-cost').slider('option').values[1]
           }
           
           // Priority
@@ -134,10 +135,11 @@ $(function() {
           if ($('[name=timeCheck]').is(':checked') == true) {
             var time = "999999999"
           } else {
-            var time = $('#slider-range-time').slider('option').values[1]
+            var mintime = $('#slider-range-time').slider('option').values[0]
+            var maxtime = $('#slider-range-time').slider('option').values[1]
           }
-
-        	window.location.href =  time + '/' + cost + '/' + priority;
+        	window.location.href =  mintime + '/' + maxtime + '/' + 
+              mincost + '/' + maxcost + '/' + priority;
         });
         $('#newTaskButton').click(function() {
 			     window.location.href = '/new'

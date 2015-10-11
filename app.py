@@ -38,14 +38,18 @@ def server_static(filepath):
 	return static_file(filepath, root='./static')
 
 # Show all the results in the database
-@route('/<usrtime:int>/<usrcost:int>/<usrpriority:int>', method='GET')
-def show_chimney(usrtime, usrcost, usrpriority):
+@route('/<mintime:int>/<maxtime:int>/<mincost:int>/<maxcost:int>/<usrpriority:int>', method='GET')
+def show_chimney(mintime, maxtime, mincost, maxcost, usrpriority):
 	db = sqlite3.connect('tasks.db')
 	c = db.cursor()
-	c.execute("SELECT * FROM t WHERE Time <= ? AND Cost <= ? AND Priority <= ?", (usrtime, usrcost, usrpriority,))
+	c.execute("SELECT * FROM t WHERE \
+	 Time >= ? AND Time <= ? AND \
+	 Cost >= ? AND Cost <= ? AND \
+	 Priority <= ?", 
+		(mintime, maxtime, mincost, maxcost, usrpriority,))
 	data = c.fetchall()
 	c.close()
-	output = template('bring_to_picnic', rows=data)
+	output = template('task_list', rows=data)
 	return output
 
 
