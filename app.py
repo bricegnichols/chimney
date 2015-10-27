@@ -100,7 +100,7 @@ def edit_item(no):
 	else:
 		conn = sqlite3.connect('tasks.db')
 		c = conn.cursor()
-		c.execute('SELECT Task FROM t WHERE rowid LIKE ?', (str(no),))
+		c.execute('SELECT Task, Time, Cost, Priority, Status FROM t WHERE rowid LIKE ?', (str(no),))
 		cur_data = c.fetchone()
 
 		return template('edit_task', old=cur_data, no=no)

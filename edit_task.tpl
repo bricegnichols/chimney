@@ -4,13 +4,13 @@
 <form action="/edit/{{no}}" method="get">
 Text<input type="text" name="Task" value="{{old[0]}}" size="100" maxlength="100">
 <br/>
-Time<input type="text" name="Time" value="" size="100" maxlength="100">
+Time<input type="text" name="Time" value="{{old[1]}}" size="100" maxlength="100">
 <br/>
-Cost<input type="text" name="Cost" value="" size="100" maxlength="100">
+Cost<input type="text" name="Cost" value="{{old[2]}}" size="100" maxlength="100">
 <br/>
-Priority<input type="text" name="Priority" value="" size="100" maxlength="100">
+Priority<input type="text" name="Priority" value="{{old[3]}}" size="100" maxlength="100">
 <br/>
-Status<input type="text" name="Status" value="" size="100" maxlength="100">
+Status<input type="text" name="Status" value="{{old[4]}}" size="100" maxlength="100">
 <br/>
 <input type="submit" name="save" value="save">
 </form>
