@@ -42,12 +42,15 @@ def server_static(filepath):
 def show_chimney(mintime, maxtime, mincost, maxcost, usrpriority):
 	db = sqlite3.connect('tasks.db')
 	c = db.cursor()
-	c.execute("SELECT * FROM t WHERE \
+	c.execute("SELECT Task, Time, Cost, Priority, rowid \
+	 FROM t WHERE \
 	 Time >= ? AND Time <= ? AND \
 	 Cost >= ? AND Cost <= ? AND \
 	 Priority <= ?", 
 		(mintime, maxtime, mincost, maxcost, usrpriority,))
 	data = c.fetchall()
+	# Fetch the row id of the query
+
 	c.close()
 	output = template('task_list', rows=data)
 	return output
