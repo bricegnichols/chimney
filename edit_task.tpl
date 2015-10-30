@@ -13,4 +13,5 @@ Priority<input type="text" name="Priority" value="{{old[3]}}" size="100" maxleng
 Status<input type="text" name="Status" value="{{old[4]}}" size="100" maxlength="100">
 <br/>
 <input type="submit" name="save" value="save">
+<input type="submit" name="delete" value="delete">
 </form>
