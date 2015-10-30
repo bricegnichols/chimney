@@ -52,7 +52,7 @@ def show_chimney(mintime, maxtime, mincost, maxcost, usrpriority):
 	# Fetch the row id of the query
 
 	c.close()
-	output = template('task_list', rows=data)
+	output = template('task_list', rows=data, query=[mintime, maxtime, mincost, maxcost, usrpriority])
 	return output
 
 
@@ -75,37 +75,41 @@ def new_item():
 		conn.commit()
 		c.close()
 
-		return '<p>The new task was inserted; the ID is %s</p>' % new_id
+		# return '<p>The new task was inserted; the ID is %s</p>' % new_id
+		return '<p>item added</p>'
 	else:
 		return template('new_task.tpl')
 
 # Edit an existing task
 @route('/edit/<no:int>', method='GET')
 def edit_item(no):
-
+	conn = sqlite3.connect('tasks.db')
+	c = conn.cursor()
 	if request.GET.get('save', '').strip():
 		task = request.GET.get('Task', '').strip()
 		time = request.GET.get('Time', '').strip()
 		cost = request.GET.get('Cost', '').strip()
 		priority = request.GET.get('Priority', '').strip()
 		status = request.GET.get('Status', '').strip()
-		conn = sqlite3.connect('tasks.db')
-		c = conn.cursor()
-		# c.execute('UPDATE t SET Task = ? WHERE rowid LIKE ?', (task,no))
 		c.execute('UPDATE t SET Task=?, Time=?, Cost=?, Priority=?, Status=? WHERE rowid LIKE ?', 
 			(task, int(time), int(cost), int(priority), status, no))
 		conn.commit()
 
-		return '<p>The item number %s was successfully updated</p>' % no
+		# return template('test', no=no)
+		return '<p>item edited</p>'
+
+	elif request.GET.get('delete', '').strip():
+		c.execute('DELETE FROM t WHERE rowid LIKE ?', (no,))
+		conn.commit()
+
+		# return template('test', no=no)
+		return '<p>item deleted</p>'
+
 	else:
-		conn = sqlite3.connect('tasks.db')
-		c = conn.cursor()
 		c.execute('SELECT Task, Time, Cost, Priority, Status FROM t WHERE rowid LIKE ?', (str(no),))
 		cur_data = c.fetchone()
 
 		return template('edit_task', old=cur_data, no=no)
-
-# Remove a task
 
 if __name__ == "__main__": 
 	app = bottle.Bottle()
