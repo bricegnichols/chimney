@@ -16,6 +16,7 @@ body {
 .ui-slider-horizontal {
     height: 2em !important;
     width: 90%;
+    margin: 4%;
 }
 .ui-slider .ui-slider-handle {
     height: 2.5em !important;
